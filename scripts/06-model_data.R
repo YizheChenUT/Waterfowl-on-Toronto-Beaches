@@ -28,11 +28,11 @@ first_model <-
     seed = 853
   )
 
-# Building the second model: Adding categorical predictors
+# Building the second model: Adding categorical and time predictors
 second_model <-
   stan_glm(
     formula = water_fowl ~ wind_speed + air_temp + water_temp + wave_action +
-      rain + water_clarity + beach_name + month,
+      rain + water_clarity + beach_name + year + month,
     data = analysis_data,
     family = gaussian(),
     prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
