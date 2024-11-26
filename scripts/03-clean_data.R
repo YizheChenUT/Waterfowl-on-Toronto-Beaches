@@ -46,6 +46,7 @@ cleaned_data <-
   ) |> # Select relevant columns
   mutate(
     data_collection_date = ymd(data_collection_date), # Ensure date column is in proper format
+    year = year(data_collection_date), # Extract year
     month = month(data_collection_date, label = TRUE, abbr = TRUE), # Extract month as a factor
     wind_speed = as.numeric(wind_speed),
     air_temp = as.numeric(air_temp),
