@@ -1,15 +1,16 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "Understanding Factors Influencing Waterfowl Counts on Toronto Beaches"
+subtitle: "A Bayesian Regression Approach Incorporating Environmental and Temporal Predictors"
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: [https://github.com/RohanAlexander/starter_folder](https://github.com/RohanAlexander/starter_folder)."
+  - Yizhe Chen
+thanks: "Code and data are available at: [https://github.com/YizheChenUT/Waterfowl-on-Toronto-Beaches.git](https://github.com/YizheChenUT/Waterfowl-on-Toronto-Beaches.git)."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "This paper investigates the environmental and temporal factors influencing waterfowl counts on Toronto beaches using a Bayesian regression model. Key predictors include weather conditions, beach-specific characteristics, and time-related factors such as year and month. The analysis reveals significant associations between waterfowl counts and these variables, providing insights for ecological management and conservation efforts"
 format: pdf
+pdf-engine: pdflatex
 number-sections: true
+toc: true
 bibliography: references.bib
 ---
 
@@ -19,96 +20,240 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-library(palmerpenguins)
 ```
 
 
 # Introduction
 
-Overview paragraph
+Urban environments, including Toronto's beaches, serve as critical habitats for waterfowl, supporting biodiversity while offering recreational spaces for humans. Understanding the factors influencing waterfowl populations is vital for ecological conservation, urban planning, and environmental management. Despite their importance, there is limited research on how environmental, temporal, and spatial factors interact to affect waterfowl abundance in urban settings, leaving a gap in the understanding necessary for effective conservation and management.
 
-Estimand paragraph
+The estimand of this study is to find out the influence of environmental (e.g., wind speed, air temperature, water temperature), temporal (e.g., year, month), and spatial (e.g., beach name) factors on waterfowl counts at Toronto beaches. Specifically, the study seeks to determine the extent to which these predictors explain variations in waterfowl populations, contributing to a broader understanding of urban ecological dynamics.
 
-Results paragraph
+This study employs a Bayesian regression model to analyze waterfowl count collected over several years at Toronto beaches by using data from Open Data Toronto [@opendata]. The results reveal that factors such as year, month, beach location, and environmental conditions significantly impact waterfowl populations. For instance, temporal variables like year and month capture seasonal trends and long-term changes, while environmental predictors provide insights into how local conditions influence waterfowl activity.
 
-Why it matters paragraph
+This research is important because it bridges the gap between ecological monitoring and actionable insights, enabling urban planners and conservationists to make informed decisions that balance biodiversity conservation with human use of urban beaches. By identifying the key drivers of waterfowl populations, this study supports sustainable management of urban ecosystems.
 
 Telegraphing paragraph: The remainder of this paper is structured as follows. @sec-data....
-
-
-
-
 
 
 # Data {#sec-data}
 
 ## Overview
 
-We use the statistical programming language R [@citeR].... Our data [@shelter].... Following @tellingstories, we consider...
+This study utilizes observational data [@opendata] collected from Toronto beaches to analyze the factors influencing waterfowl counts. The dataset consists of detailed environmental measurements, temporal records, and spatial identifiers, providing a comprehensive view of the conditions at various beaches. The data was processed using the statistical programming language R [@citeR], and all analyses were conducted in a fully reproducible workflow. Following established guidelines [@tellingstories], the data was carefully cleaned and structured to ensure accuracy and reliability.
 
-Overview text
+The raw dataset contained measurements such as wind speed, air temperature, water temperature, water clarity, wave action, and more, recorded alongside waterfowl counts at multiple beaches. These records span multiple years and months, capturing both seasonal and long-term trends. By focusing on these key predictors, this paper aims to understand how environmental and temporal factors influence waterfowl populations.
 
 ## Measurement
 	
-Some paragraphs about how we go from a phenomena in the world to an entry in the dataset.
+The transformation of raw observational data into analyzable variables involved a series of well-documented steps. Each record in the dataset corresponds to an observation made on a specific date at a particular beach. The data cleaning process addressed inconsistencies, missing values, and outliers to ensure accuracy. Below is an overview of the key measurement considerations:
+
+### Date and Temporal Variables
+
+- Year and Month: The `data_collection_date` column was transformed to extract `year` and `month` as separate variables. These temporal variables capture both seasonal patterns and long-term changes in waterfowl populations.
+
+- Processing: Using R's `lubridate` package [@lubridate], the date format was standardized, and missing or invalid entries were removed.
+
+### Environmental Conditions
+
+- Variables such as `wind_speed`, `air_temp`, and `water_temp` were converted to numeric types for consistency. Outliers in these variables were removed using an interquartile range (IQR)-based approach.
+
+- `Rain` was converted into a binary variable (`1` for "Yes," `0` for "No") to simplify analysis.
+
+### Categorical Variables
+
+- `Wave_action` was standardized to lowercase and categorized into levels: "none," "low," "mod," and "high."
+
+- `Water_clarity` was grouped into categories such as "clear," "cloudy," and "unknown," based on textual patterns in the raw data.
+
+### Outlier Removal
+
+- Outliers in numeric variables were handled using a custom function based on the IQR method, applied within groups defined by `beach_name`. This ensured outlier detection was sensitive to each beach's unique conditions.
+
+
+By addressing these measurement challenges, the dataset was transformed into a reliable foundation for modeling.
 
 ## Outcome variables
 
-Add graphs, tables and text. Use sub-sub-headings for each outcome variable or update the subheading to be singular.
+The primary outcome variable in this study is `water_fowl`, representing the count of waterfowl observed at a given beach on a specific date. This variable serves as the dependent variable in the Bayesian regression models.
 
-
-
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+The distribution of waterfowl counts across different beaches is shown in @fig-waterfowl-distribution.
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
+#| label: fig-waterfowl-distribution
+#| fig-cap: Distribution of waterfowl counts across beaches
 #| echo: false
-
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
-
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
+#| eval: true
 #| warning: false
 #| message: false
 
 analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
 
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
+ggplot(analysis_data, aes(x = water_fowl)) +
+  geom_histogram(binwidth = 5, fill = "skyblue", color = "black", alpha = 0.7) +
   theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
+  labs(
+    title = "Distribution of Waterfowl Counts",
+    x = "Waterfowl Count",
+    y = "Frequency"
+  )
+
 ```
 
-Talk way more about it. 
 
 ## Predictor variables
 
-Add graphs, tables and text.
+The study examines several predictor variables, categorized into environmental, temporal, and spatial factors. Each of these variables plays a critical role in understanding the patterns and dynamics of waterfowl counts. Below, detailed explanations are provided alongside corresponding visualizations for these variables.
 
-Use sub-sub-headings for each outcome variable and feel free to combine a few into one if they go together naturally.
+### Environmental Variables
+
+#### Wind Speed
+
+Measures the speed of wind at the observation site. Wind conditions may influence waterfowl behavior, particularly their foraging and resting patterns.
+
+@fig-wind-speed illustrates that wind speeds are generally concentrated between 5 and 15 m/s, with a peak near 10 m/s. This distribution reflects typical wind conditions observed during data collection, with few extreme values.
+
+```{r}
+#| label: fig-wind-speed
+#| fig-cap: Distribution of wind speeds across all observations.
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+
+analysis_data |> 
+  ggplot(aes(x = wind_speed)) +
+  geom_histogram(bins = 30, fill = "steelblue", alpha = 0.7) +
+  geom_point(aes(y = ..count..), stat = "bin", binwidth = 1, position = "jitter", alpha = 0.4) +
+  theme_minimal() +
+  labs(x = "Wind Speed (m/s)", y = "Count", title = "Distribution of Wind Speed")
+
+```
+
+#### Air Temperature
+
+Represents the atmospheric temperature at the time of observation. Air temperature is a key ecological factor, influencing waterfowl activity levels and habitat use.
+
+@fig-air-temp shows air temperatures primarily range between 15°C and 25°C, peaking around 20°C. This suggests the data predominantly represents warmer months, aligning with periods of heightened waterfowl activity.
+
+```{r}
+#| label: fig-air-temp
+#| fig-cap: Distribution of air temperature across all observations.
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+
+analysis_data |> 
+  ggplot(aes(x = air_temp)) +
+  geom_density(fill = "tomato", alpha = 0.6) +
+  theme_minimal() +
+  labs(x = "Air Temperature (°C)", y = "Density", title = "Distribution of Air Temperature")
+
+```
+
+#### Water Temperature
+
+Indicates the temperature of the water, which directly impacts the suitability of the habitat for waterfowl.
+
+@fig-water-temp indicates that water temperatures are mostly distributed between 10°C and 20°C, with a notable peak around 18°C. This distribution suggests moderate water conditions conducive to waterfowl activity during the observation periods.
+
+```{r}
+#| label: fig-water-temp
+#| fig-cap: Distribution of water temperatures across all observations.
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+
+analysis_data |> 
+  ggplot(aes(x = water_temp)) +
+  geom_histogram(bins = 20, fill = "forestgreen", alpha = 0.7) +
+  theme_minimal() +
+  labs(x = "Water Temperature (°C)", y = "Count", title = "Distribution of Water Temperature")
+
+```
+
+### Temporal Variables
+
+#### Year
+
+Captures long-term trends and shifts in waterfowl populations. These trends may reflect broader environmental changes, such as climate change or habitat alterations.
+
+@fig-year-trend depicts the mean waterfowl counts per year. The data shows an initial peak around 2010, followed by a steady decline with some fluctuations. This suggests potential long-term changes in the waterfowl population or their habitat preferences.
+
+```{r}
+#| label: fig-year-trend
+#| fig-cap: Waterfowl counts over the years.
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+
+analysis_data |> 
+  group_by(year) |> 
+  summarise(mean_water_fowl = mean(water_fowl, na.rm = TRUE)) |> 
+  ggplot(aes(x = year, y = mean_water_fowl)) +
+  geom_line(color = "blue") +
+  geom_point(color = "darkblue") +
+  theme_minimal() +
+  labs(x = "Year", y = "Mean Waterfowl Count", title = "Trends in Waterfowl Counts Over the Years")
+
+```
+
+#### Month
+
+Accounts for seasonal variations, providing views into the effects of migration patterns and breeding cycles on waterfowl activity.
+
+@fig-month-trend illustrates monthly variations in waterfowl counts. While the median counts are relatively stable across months, the data exhibits significant variability, particularly in the summer months of June, July, and August, where larger counts are observed. These patterns highlight the importance of seasonality in understanding waterfowl dynamics.
+
+```{r}
+#| label: fig-month-trend
+#| fig-cap: Monthly variation in waterfowl counts.
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+
+analysis_data |> 
+  ggplot(aes(x = month, y = water_fowl)) +
+  geom_boxplot(outlier.alpha = 0.3, fill = "orange", alpha = 0.5) +
+  geom_jitter(width = 0.2, alpha = 0.4, color = "darkorange") +
+  theme_minimal() +
+  labs(x = "Month", y = "Waterfowl Count", title = "Monthly Variation in Waterfowl Counts")
+
+```
+
+###Spatial Variables
+
+#### Beach Name
+
+Identifies the observation location, reflecting site-specific environmental or human influences on waterfowl counts.
+
+@fig-beach-count reveals considerable variation. Beaches such as Sunnyside Beach and Kew Balmy Beach report higher median counts, while locations like Gibraltar Point Beach and Marie Curtis Park East Beach have relatively lower median counts. The dispersion in counts is also notable, particularly at beaches with higher counts, indicating diverse environmental conditions and habitat preferences.
+
+```{r}
+#| label: fig-beach-count
+#| fig-cap: Distribution of waterfowl counts by beach.
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+
+analysis_data |> 
+  ggplot(aes(x = fct_reorder(beach_name, water_fowl, .fun = median), y = water_fowl)) +
+  geom_boxplot(outlier.alpha = 0.3, fill = "purple", alpha = 0.6) +
+  geom_jitter(width = 0.2, alpha = 0.4, color = "mediumpurple") +
+  coord_flip() +
+  theme_minimal() +
+  labs(x = "Beach Name", y = "Waterfowl Count", title = "Distribution of Waterfowl Counts by Beach")
+
+```
 
 
 
 
-
-
-
+The relationships between these predictor variables and waterfowl counts are central to the analysis. The visualizations provided above illustrate their distributions and interactions, offering a comprehensive overview of the dataset. These factors will be further explored in the modeling section to assess their significance and impact.
 
 # Model
 
