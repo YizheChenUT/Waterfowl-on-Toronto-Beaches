@@ -1,89 +1,132 @@
 #### Preamble ####
-# Purpose: Tests the structure and validity of the simulated Australian 
-  #electoral divisions dataset.
-# Author: Rohan Alexander
-# Date: 26 September 2024
-# Contact: rohan.alexander@utoronto.ca
+# Purpose: Tests the structure and validity of the simulated Toronto beaches dataset.
+# Author: Yizhe Chen
+# Date: 1 Dec 2024
+# Contact: yz.chen@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: 
-  # - The `tidyverse` package must be installed and loaded
-  # - 00-simulate_data.R must have been run
-# Any other information needed? Make sure you are in the `starter_folder` rproj
+# - Install and load `testthat` and `pointblank` packages.
+# - Simulated data must be saved as `simulated_data.csv`.
+# Any other information needed? No
 
 
 #### Workspace setup ####
+library(testthat)
+library(pointblank)
 library(tidyverse)
 
-analysis_data <- read_csv("data/00-simulated_data/simulated_data.csv")
+# Load simulated data
+simulated_data <- read_csv("data/00-simulated_data/simulated_data.csv")
 
-# Test if the data was successfully loaded
-if (exists("analysis_data")) {
-  message("Test Passed: The dataset was successfully loaded.")
-} else {
-  stop("Test Failed: The dataset could not be loaded.")
-}
+#### Test Suite using testthat ####
+
+test_that("Dataset structure and basic properties", {
+  # Check the dataset has the expected number of columns
+  expect_equal(ncol(simulated_data), 12, label = "The dataset should have 12 columns.")
+  
+  # Verify column names
+  expected_columns <- c(
+    "data_collection_date", "beach_name", "wind_speed", "wind_direction",
+    "air_temp", "rain", "water_temp", "water_fowl", "wave_action", 
+    "water_clarity", "year", "month"
+  )
+  expect_equal(names(simulated_data), expected_columns, label = "Column names are incorrect.")
+  
+  # Ensure the dataset has at least 1000 rows
+  expect_true(nrow(simulated_data) >= 1000, label = "The dataset should have at least 1000 rows.")
+})
+
+test_that("Data values are valid", {
+  # Check 'data_collection_date' for valid date format
+  expect_true(all(!is.na(as.Date(simulated_data$data_collection_date))),
+              label = "'data_collection_date' should contain valid dates.")
+  
+  # Check numeric columns for valid ranges
+  expect_true(all(simulated_data$wind_speed >= 0), label = "'wind_speed' should be non-negative.")
+  expect_true(all(simulated_data$air_temp > -50 & simulated_data$air_temp < 60),
+              label = "'air_temp' should be within a realistic range.")
+  expect_true(all(simulated_data$water_temp > 0 & simulated_data$water_temp < 40),
+              label = "'water_temp' should be within a realistic range.")
+  
+  # Ensure binary column 'rain' contains only 0 or 1
+  expect_true(all(simulated_data$rain %in% c(0, 1)), label = "'rain' should be binary (0 or 1).")
+  
+  # Validate categorical columns
+  valid_wave_actions <- c("none", "low", "mod", "high")
+  expect_true(all(simulated_data$wave_action %in% valid_wave_actions),
+              label = "'wave_action' should contain valid categories.")
+  
+  valid_water_clarity <- c("clear", "cloudy", "unknown")
+  expect_true(all(simulated_data$water_clarity %in% valid_water_clarity),
+              label = "'water_clarity' should contain valid categories.")
+  
+  # Ensure waterfowl counts are non-negative
+  expect_true(all(simulated_data$water_fowl >= 0), 
+              label = "'waterfowl_count' should be non-negative.")
+})
+
+test_that("Missing and duplicate values", {
+  # Check for missing values
+  expect_true(all(!is.na(simulated_data)), label = "The dataset should not contain missing values.")
+  
+  # Check for duplicate rows
+  expect_true(nrow(simulated_data) == n_distinct(simulated_data), 
+              label = "The dataset should not contain duplicate rows.")
+})
 
 
-#### Test data ####
+#### Test Suite using pointblank ####
+# Validate dataset with pointblank
+agent <- create_agent(tbl = simulated_data) %>%
+  col_schema_match(
+    schema = col_schema(
+      data_collection_date = "character",
+      beach_name = "character",
+      wind_speed = "numeric",
+      air_temp = "numeric",
+      water_temp = "numeric",
+      rain = "integer",
+      wave_action = "character",
+      water_fowl = "numeric"
+    )
+  ) %>%
+  col_vals_in_set(
+    columns = vars(beach_name),
+    set = c(
+      "Sunnyside Beach", "Woodbine Beach", "Cherry Beach", 
+      "Hanlan's Point Beach", "Marie Curtis Park Beach", 
+      "Kew Balmy Beach", "Centre Island Beach"
+    )
+  ) %>%
+  col_vals_between(
+    columns = vars(wind_speed),
+    left = 0, right = 20
+  ) %>%
+  col_vals_between(
+    columns = vars(air_temp),
+    left = -50, right = 60
+  ) %>%
+  col_vals_between(
+    columns = vars(water_temp),
+    left = 0, right = 40
+  ) %>%
+  col_vals_in_set(
+    columns = vars(wave_action),
+    set = c("none", "low", "mod", "high")
+  ) %>%
+  col_vals_in_set(
+    columns = vars(water_clarity),
+    set = c("clear", "cloudy", "unknown")
+  ) %>%
+  col_vals_gte(
+    columns = vars(water_fowl),
+    value = 0
+  ) %>%
+  col_vals_lte(
+    columns = vars(water_fowl),
+    value = 100
+  ) %>%
+  interrogate()
 
-# Check if the dataset has 151 rows
-if (nrow(analysis_data) == 151) {
-  message("Test Passed: The dataset has 151 rows.")
-} else {
-  stop("Test Failed: The dataset does not have 151 rows.")
-}
-
-# Check if the dataset has 3 columns
-if (ncol(analysis_data) == 3) {
-  message("Test Passed: The dataset has 3 columns.")
-} else {
-  stop("Test Failed: The dataset does not have 3 columns.")
-}
-
-# Check if all values in the 'division' column are unique
-if (n_distinct(analysis_data$division) == nrow(analysis_data)) {
-  message("Test Passed: All values in 'division' are unique.")
-} else {
-  stop("Test Failed: The 'division' column contains duplicate values.")
-}
-
-# Check if the 'state' column contains only valid Australian state names
-valid_states <- c("New South Wales", "Victoria", "Queensland", "South Australia", 
-                  "Western Australia", "Tasmania", "Northern Territory", 
-                  "Australian Capital Territory")
-
-if (all(analysis_data$state %in% valid_states)) {
-  message("Test Passed: The 'state' column contains only valid Australian state names.")
-} else {
-  stop("Test Failed: The 'state' column contains invalid state names.")
-}
-
-# Check if the 'party' column contains only valid party names
-valid_parties <- c("Labor", "Liberal", "Greens", "National", "Other")
-
-if (all(analysis_data$party %in% valid_parties)) {
-  message("Test Passed: The 'party' column contains only valid party names.")
-} else {
-  stop("Test Failed: The 'party' column contains invalid party names.")
-}
-
-# Check if there are any missing values in the dataset
-if (all(!is.na(analysis_data))) {
-  message("Test Passed: The dataset contains no missing values.")
-} else {
-  stop("Test Failed: The dataset contains missing values.")
-}
-
-# Check if there are no empty strings in 'division', 'state', and 'party' columns
-if (all(analysis_data$division != "" & analysis_data$state != "" & analysis_data$party != "")) {
-  message("Test Passed: There are no empty strings in 'division', 'state', or 'party'.")
-} else {
-  stop("Test Failed: There are empty strings in one or more columns.")
-}
-
-# Check if the 'party' column has at least two unique values
-if (n_distinct(analysis_data$party) >= 2) {
-  message("Test Passed: The 'party' column contains at least two unique values.")
-} else {
-  stop("Test Failed: The 'party' column contains less than two unique values.")
-}
+# Print pointblank summary
+print(agent)
