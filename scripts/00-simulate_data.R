@@ -1,12 +1,11 @@
 #### Preamble ####
-# Purpose: Simulates a dataset of Australian electoral divisions, including the 
-  #state and party that won each division.
-# Author: Rohan Alexander
-# Date: 26 September 2024
-# Contact: rohan.alexander@utoronto.ca
+# Purpose: Simulates a dataset of Toronto beach observations with synthetic variables.
+# Author: Yizhe Chen
+# Date: 1 Dec 2024
+# Contact: yz.chen@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: The `tidyverse` package must be installed
-# Any other information needed? Make sure you are in the `starter_folder` rproj
+# Any other information needed? The simulation focuses on synthetic interactions between variables.
 
 
 #### Workspace setup ####
@@ -15,37 +14,55 @@ set.seed(853)
 
 
 #### Simulate data ####
-# State names
-states <- c(
-  "New South Wales",
-  "Victoria",
-  "Queensland",
-  "South Australia",
-  "Western Australia",
-  "Tasmania",
-  "Northern Territory",
-  "Australian Capital Territory"
-)
+# Define the number of observations
+n <- 1000
 
-# Political parties
-parties <- c("Labor", "Liberal", "Greens", "National", "Other")
-
-# Create a dataset by randomly assigning states and parties to divisions
-analysis_data <- tibble(
-  division = paste("Division", 1:151),  # Add "Division" to make it a character
-  state = sample(
-    states,
-    size = 151,
-    replace = TRUE,
-    prob = c(0.25, 0.25, 0.15, 0.1, 0.1, 0.1, 0.025, 0.025) # Rough state population distribution
+# Simulate the variables
+simulated_data <- tibble(
+  data_collection_date = sample(
+    seq.Date(from = as.Date("2010-01-01"), to = as.Date("2024-01-01"), by = "day"),
+    size = n,
+    replace = TRUE
   ),
-  party = sample(
-    parties,
-    size = 151,
+  beach_name = sample(
+    c("Sunnyside Beach", "Woodbine Beach", "Cherry Beach", 
+      "Hanlan's Point Beach", "Marie Curtis Park Beach", 
+      "Kew Balmy Beach", "Centre Island Beach"),
+    size = n,
+    replace = TRUE
+  ),
+  wind_speed = round(rnorm(n, mean = 10, sd = 3), 1),
+  air_temp = round(rnorm(n, mean = 20, sd = 5), 1),
+  water_temp = round(rnorm(n, mean = 18, sd = 3), 1),
+  rain = rbinom(n, 1, prob = 0.3),
+  wave_action = sample(
+    c("none", "low", "mod", "high"),
+    size = n,
     replace = TRUE,
-    prob = c(0.40, 0.40, 0.05, 0.1, 0.05) # Rough party distribution
+    prob = c(0.2, 0.3, 0.3, 0.2)
+  ),
+  water_clarity = sample(
+    c("clear", "cloudy", "unknown"),
+    size = n,
+    replace = TRUE,
+    prob = c(0.5, 0.3, 0.2)
   )
-)
+) %>%
+  mutate(
+    waterfowl_count = round(
+      10 + 0.2 * wind_speed - 0.1 * air_temp + 
+        0.3 * water_temp + 
+        ifelse(wave_action == "low", 1, 
+               ifelse(wave_action == "mod", 2, 
+                      ifelse(wave_action == "high", 3, 0)
+               )
+        ) + 
+        rain * 2 + 
+        ifelse(water_clarity == "clear", 3, 
+               ifelse(water_clarity == "cloudy", 1, 0)
+        ) + rnorm(n, mean = 0, sd = 3)
+    )
+  )
 
 
 #### Save data ####
