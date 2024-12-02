@@ -47,7 +47,7 @@ simulated_data <- tibble(
     replace = TRUE,
     prob = c(0.5, 0.3, 0.2)
   )
-) %>%
+) |>
   mutate(
     waterfowl_count = round(
       10 + 0.2 * wind_speed - 0.1 * air_temp + 
@@ -66,4 +66,4 @@ simulated_data <- tibble(
 
 
 #### Save data ####
-write_csv(analysis_data, "data/00-simulated_data/simulated_data.csv")
+write_csv(simulated_data, "data/00-simulated_data/simulated_data.csv")

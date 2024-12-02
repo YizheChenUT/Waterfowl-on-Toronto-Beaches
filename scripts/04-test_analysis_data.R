@@ -29,12 +29,12 @@ test_that("'data_collection_date' is within expected range", {
                     analysis_data$data_collection_date <= as.Date("2025-01-01")))
 })
 
-# Validate numerical columns (wind_speed, air_temp, water_temp, waterfowl_count)
+# Validate numerical columns (wind_speed, air_temp, water_temp, water_fowl)
 test_that("Numerical columns are within reasonable ranges", {
   expect_true(all(analysis_data$wind_speed >= 0 & analysis_data$wind_speed <= 30))
   expect_true(all(analysis_data$air_temp >= -10 & analysis_data$air_temp <= 40))
   expect_true(all(analysis_data$water_temp >= 0 & analysis_data$water_temp <= 30))
-  expect_true(all(analysis_data$waterfowl_count >= 0))
+  expect_true(all(analysis_data$water_fowl >= 0))
 })
 
 # Validate categorical columns

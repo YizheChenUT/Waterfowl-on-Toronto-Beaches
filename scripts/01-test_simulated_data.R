@@ -22,13 +22,13 @@ simulated_data <- read_csv("data/00-simulated_data/simulated_data.csv")
 
 test_that("Dataset structure and basic properties", {
   # Check the dataset has the expected number of columns
-  expect_equal(ncol(simulated_data), 12, label = "The dataset should have 12 columns.")
+  expect_equal(ncol(simulated_data), 9, label = "The dataset should have 9 columns.")
   
   # Verify column names
   expected_columns <- c(
-    "data_collection_date", "beach_name", "wind_speed", "wind_direction",
-    "air_temp", "rain", "water_temp", "water_fowl", "wave_action", 
-    "water_clarity", "year", "month"
+    "data_collection_date", "beach_name", "wind_speed",
+    "air_temp", "water_temp", "rain", "wave_action", 
+    "water_clarity", "waterfowl_count"
   )
   expect_equal(names(simulated_data), expected_columns, label = "Column names are incorrect.")
   
@@ -87,9 +87,9 @@ agent <- create_agent(tbl = simulated_data) %>%
       water_temp = "numeric",
       rain = "integer",
       wave_action = "character",
-      water_fowl = "numeric"
+      waterfowl_count = "numeric"
     )
-  ) %>%
+  ) |>
   col_vals_in_set(
     columns = vars(beach_name),
     set = c(
@@ -97,35 +97,35 @@ agent <- create_agent(tbl = simulated_data) %>%
       "Hanlan's Point Beach", "Marie Curtis Park Beach", 
       "Kew Balmy Beach", "Centre Island Beach"
     )
-  ) %>%
+  ) |>
   col_vals_between(
     columns = vars(wind_speed),
     left = 0, right = 20
-  ) %>%
+  ) |>
   col_vals_between(
     columns = vars(air_temp),
     left = -50, right = 60
-  ) %>%
+  ) |>
   col_vals_between(
     columns = vars(water_temp),
     left = 0, right = 40
-  ) %>%
+  ) |>
   col_vals_in_set(
     columns = vars(wave_action),
     set = c("none", "low", "mod", "high")
-  ) %>%
+  ) |>
   col_vals_in_set(
     columns = vars(water_clarity),
     set = c("clear", "cloudy", "unknown")
-  ) %>%
+  ) |>
   col_vals_gte(
-    columns = vars(water_fowl),
+    columns = vars(waterfowl_count),
     value = 0
-  ) %>%
+  ) |>
   col_vals_lte(
-    columns = vars(water_fowl),
+    columns = vars(waterfowl_count),
     value = 100
-  ) %>%
+  ) |>
   interrogate()
 
 # Print pointblank summary
