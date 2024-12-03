@@ -24,6 +24,7 @@ library(modelsummary)
 library(here)
 library(broom.mixed)
 library(rstanarm)
+library(arrow)
 ```
 
 
@@ -91,7 +92,7 @@ The distribution of waterfowl counts across different beaches is shown in @fig-w
 #| warning: false
 #| message: false
 
-analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
+analysis_data <- read_parquet(here::here("data/02-analysis_data/analysis_data.parquet"))
 
 ggplot(analysis_data, aes(x = water_fowl)) +
   geom_histogram(binwidth = 5, fill = "skyblue", color = "black", alpha = 0.7) +

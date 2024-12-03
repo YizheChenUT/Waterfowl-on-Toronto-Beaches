@@ -11,6 +11,7 @@
 library(tidyverse)
 library(janitor)
 library(lubridate)
+library(arrow)
 
 
 #### Define a function to remove outliers ####
@@ -81,4 +82,4 @@ cleaned_data <-
 
 
 #### Save data ####
-write_csv(cleaned_data, "data/02-analysis_data/analysis_data.csv")
+write_parquet(cleaned_data, "data/02-analysis_data/analysis_data.parquet")

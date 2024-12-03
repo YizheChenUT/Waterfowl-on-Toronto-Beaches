@@ -14,9 +14,10 @@
 library(testthat)
 library(pointblank)
 library(tidyverse)
+library(arrow)
 
 # Load simulated data
-simulated_data <- read_csv("data/00-simulated_data/simulated_data.csv")
+simulated_data <- read_parquet("data/00-simulated_data/simulated_data.parquet")
 
 #### Test Suite using testthat ####
 
@@ -61,7 +62,7 @@ test_that("Data values are valid", {
               label = "'water_clarity' should contain valid categories.")
   
   # Ensure waterfowl counts are non-negative
-  expect_true(all(simulated_data$water_fowl >= 0), 
+  expect_true(all(simulated_data$waterfowl_count >= 0), 
               label = "'waterfowl_count' should be non-negative.")
 })
 

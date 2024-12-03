@@ -11,19 +11,14 @@
 #### Workspace setup ####
 library(tidyverse)
 library(ggcorrplot)
+library(arrow)
 
 
 #### Read data ####
-analysis_data <- read_csv("data/02-analysis_data/analysis_data.csv")
+analysis_data <- read_parquet("data/02-analysis_data/analysis_data.parquet")
 
 #### Exploratory Data Analysis ####
 
-# Summary statistics for all variables
-summary_stats <- analysis_data |> 
-  summarise(across(everything(), list(mean = ~mean(.x, na.rm = TRUE),
-                                      sd = ~sd(.x, na.rm = TRUE),
-                                      min = ~min(.x, na.rm = TRUE),
-                                      max = ~max(.x, na.rm = TRUE))))
 
 # Distribution of water_fowl
 ggplot(analysis_data, aes(x = water_fowl)) +
