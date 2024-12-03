@@ -3,7 +3,7 @@ title: "Datasheet for 'Toronto Beaches Observations Dataset'"
 subtitle: "A comprehensive dataset for analyzing environmental, temporal, and spatial factors affecting waterfowl counts on Toronto beaches"
 author: 
   - Yizhe Chen
-thanks: "Code and data are available at:[https://github.com/YizheChenUT/Waterfowl-on-Toronto-Beaches.git](https://github.com/YizheChenUT/Waterfowl-on-Toronto-Beaches.git)."
+thanks: "Code and data are available at: [https://github.com/YizheChenUT/Waterfowl-on-Toronto-Beaches.git](https://github.com/YizheChenUT/Waterfowl-on-Toronto-Beaches.git)."
 date: today
 date-format: long
 abstract: "The Toronto Beaches Observations Dataset is designed to analyze environmental, temporal, and spatial factors influencing waterfowl counts across Toronto beaches. It contains rich features including weather variables, water clarity, and seasonal indicators, enabling robust ecological and environmental modeling."
@@ -57,22 +57,22 @@ Extract of the questions from @gebru2021datasheets. Some information are from @o
    - Noise may be present due to variability in manual observation methods.
 
 10. Is the dataset self-contained?
-   - Yes, the dataset is self-contained and does not rely on external resources.
+    - Yes, the dataset is self-contained and does not rely on external resources.
 
 11. Does the dataset contain data that might be considered confidential?
-   - No, all data is publicly available and anonymized.
+    - No, all data is publicly available and anonymized.
 
 12. Does the dataset contain potentially offensive or sensitive data?
-   - No, the dataset does not contain sensitive content.
+    - No, the dataset does not contain sensitive content.
 
 13. Does the dataset identify any sub-populations?
-   - Sub-populations are identified by `beach_name`, representing geographic locations.
+    - Sub-populations are identified by `beach_name`, representing geographic locations.
 
 14. Is it possible to identify individuals from the dataset?
-   - No, the dataset does not contain personally identifiable information.
+    - No, the dataset does not contain personally identifiable information.
 
 15. Does the dataset contain sensitive data?
-   - No, the dataset contains only environmental and observational data.
+    - No, the dataset contains only environmental and observational data.
 
 
 **Collection process**
