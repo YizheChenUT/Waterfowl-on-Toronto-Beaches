@@ -12,7 +12,7 @@ number-sections: true
 bibliography: references.bib
 ---
 
-Extract of the questions from @gebru2021datasheets.
+Extract of the questions from @gebru2021datasheets. Some information are from @opendata.
 
 
 **Motivation**
