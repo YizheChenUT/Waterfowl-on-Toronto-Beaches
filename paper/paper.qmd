@@ -1,12 +1,12 @@
 ---
-title: "Understanding Factors Influencing Waterfowl Counts on Toronto Beaches"
-subtitle: "A Bayesian Regression Approach Incorporating Environmental and Temporal Predictors"
+title: "Environmental, Temporal, and Spatial Influences on Waterfowl Counts at Toronto Beaches"
+subtitle: "Suggestions from Bayesian Regression for Urban Ecological Management"
 author: 
   - Yizhe Chen
 thanks: "Code and data are available at: [https://github.com/YizheChenUT/Waterfowl-on-Toronto-Beaches.git](https://github.com/YizheChenUT/Waterfowl-on-Toronto-Beaches.git)."
 date: today
 date-format: long
-abstract: "This paper investigates the environmental and temporal factors influencing waterfowl counts on Toronto beaches using a Bayesian regression model. Key predictors include weather conditions, beach-specific characteristics, and time-related factors such as year and month. The analysis finds significant associations between waterfowl counts and these variables, providing opinions for ecological management and conservation efforts"
+abstract: "This paper studies the environmental, temporal, and spatial factors affecting waterfowl populations on Toronto beaches. Using a Bayesian regression model, key predictors such as wind speed, water clarity, and seasonal trends were analyzed to understand their impact on waterfowl counts. The findings show significant associations, including the influence of water clarity and wave action on habitat preferences, as well as long-term declines linked to environmental changes. These findings are vital for informing ecological conservation and urban planning efforts, supporting sustainable coexistence between human activity and biodiversity in urban waterfronts."
 format: pdf
 pdf-engine: pdflatex
 number-sections: true
@@ -30,15 +30,15 @@ library(arrow)
 
 # Introduction
 
-Urban environments, including Toronto's beaches, serve as vital habitats for waterfowl, supporting biodiversity while offering recreational spaces for humans. Understanding the factors influencing waterfowl populations is vital for ecological conservation, urban planning, and environmental management. Despite their importance, there is limited research on how environmental, temporal, and spatial factors interact to affect waterfowl abundance in urban settings, leaving a gap in the understanding necessary for effective conservation and management.
+Urban environments, such as Toronto’s beaches, serve as habitats for waterfowl, supporting biodiversity while coexisting with human recreational activities. These ecosystems are essential for ecological conservation, urban planning, and environmental management. However, there is a limited understanding of how environmental, temporal, and spatial factors influence waterfowl abundance in urban settings. This knowledge gap hinders effective conservation and management strategies, highlighting the need for research into the dynamics of waterfowl populations in urban ecosystems.
 
-The estimand of this study is to find out the influence of environmental (e.g., wind speed, air temperature, water temperature), temporal (e.g., year, month), and spatial (e.g., beach name) factors on waterfowl counts at Toronto beaches. Specifically, the study seeks to determine the extent to which these predictors explain variations in waterfowl populations, contributing to a broader understanding of urban ecological dynamics.
+The estimand of this study is the relationship between waterfowl counts and key predictors, specifically environmental factors (e.g., wind speed, air temperature, water temperature), temporal factors (e.g., year, month), and spatial factors (e.g., beach name). The goal is to quantify the extent to which these predictors explain variations in waterfowl populations, offering understandings for the drivers of urban ecological dynamics.
 
-This study employs a Bayesian regression model to analyze waterfowl count collected over several years at Toronto beaches by using data from Open Data Toronto [@opendata]. The results show that factors such as year, month, beach location, and environmental conditions significantly impact waterfowl populations. For instance, temporal variables like year and month capture seasonal trends and long-term changes, while environmental predictors provide understandings on how local conditions influence waterfowl activity.
+To address this objective, the study employs a Bayesian regression model to analyze waterfowl counts collected from Toronto beaches over several years. This study uses the statistical programming language R [@citeR]. The dataset, sourced from Open Data Toronto [@opendata], captures detailed environmental, temporal, and spatial variables. The analysis shows significant associations between these predictors and waterfowl counts, identifying key drivers of waterfowl activity. For example, temporal patterns highlight the role of seasonal trends, while environmental conditions such as water clarity and wave action reflect habitat suitability.
 
 This research is important because it resolves the issues between ecological monitoring and actionable opinions, enabling urban planners and conservationists to make informed decisions that balance biodiversity conservation with human use of urban beaches. By identifying the key drivers of waterfowl populations, this study supports sustainable management of urban ecosystems.
 
-The remainder of this paper is structured as follows. @sec-data details the data, including its sources, measurement processes, and key variables of interest, with a focus on environmental, temporal, and spatial predictors. @sec-model introduces the Bayesian regression models used in the analysis, providing explanations for their formulation, justification, and validation techniques. @sec-result presents the results, highlighting the significant factors influencing waterfowl counts, supported by visualizations and summary statistics. @sec-discuss discusses the broader implications of these findings for ecological management, identifies limitations of the current study, and suggests directions for future research. Finally, @sec-appendix provides additional details about data sources, methodological considerations, and linkages to the existing literature, offering a view of the study’s context and contributions.
+The remainder of this paper is structured as follows. @sec-data details the data, including its sources, measurement processes, and key variables of interest, with a focus on environmental, temporal, and spatial predictors. @sec-model introduces the Bayesian regression models used in the analysis, providing explanations for their formulation, justification, and validation techniques. @sec-result presents the results, highlighting the significant factors influencing waterfowl counts, supported by visualizations and summary statistics. @sec-discuss discusses the broader implications of these findings for ecological management, identifies limitations of the current study, and suggests directions for future research. Finally, @sec-appendix provides additional methodological details, including sampling strategies, observational challenges, and linkages to relevant literature.
 
 
 # Data {#sec-data}
@@ -48,6 +48,10 @@ The remainder of this paper is structured as follows. @sec-data details the data
 This study utilizes observational data from Open Data Toronto [@opendata] collected from Toronto beaches to analyze the factors influencing waterfowl counts. The dataset consists of detailed environmental measurements, temporal records, and spatial identifiers, providing a view of the conditions at various beaches. The data was processed using the statistical programming language R [@citeR], and all analyses were conducted in a fully reproducible workflow. Following established guidelines [@tellingstories], the data was carefully cleaned and structured to ensure accuracy and reliability.
 
 The raw dataset contained measurements such as wind speed, air temperature, water temperature, water clarity, wave action, and more, recorded alongside waterfowl counts at multiple beaches. These records span multiple years and months, capturing both seasonal and long-term trends. By focusing on these key predictors, this paper aims to understand how environmental and temporal factors influence waterfowl populations.
+
+## Data Cleaning
+
+The raw data from Toronto Beaches Observations underwent a cleaning process to ensure accuracy, consistency, and reliability. This included standardizing column names, handling missing values, and removing outliers specific to each beach’s environmental conditions by using the janitor package [@janitor]. Key variables were formatted into appropriate data types, with categorical variables like "wave action" and "water clarity" standardized into meaningful levels, and numeric variables adjusted for outliers using an interquartile range-based method. These steps transformed the raw dataset into a structured, high-quality dataset suitable for modeling, enabling precise analysis of the factors influencing waterfowl counts.
 
 ## Measurement
 	
@@ -82,7 +86,7 @@ By addressing these measurement challenges, the dataset was transformed into a r
 
 The primary outcome variable in this study is `water_fowl`, representing the count of waterfowl observed at a given beach on a specific date. This variable serves as the dependent variable in the Bayesian regression models.
 
-The distribution of waterfowl counts across different beaches is shown in @fig-waterfowl-distribution.
+The distribution of waterfowl counts across different beaches is shown in @fig-waterfowl-distribution by using ggplot2 package [@ggplot].
 
 ```{r}
 #| label: fig-waterfowl-distribution
@@ -255,7 +259,7 @@ The relationships between these predictor variables and waterfowl counts are cen
 
 # Model {#sec-model}
 
-The objective of the modeling strategy is to explore how environmental, temporal, and spatial factors influence waterfowl counts on Toronto beaches. A Bayesian linear regression framework was selected due to its flexibility in incorporating prior information and quantifying uncertainty effectively.
+The primary objective of this study is to model the factors influencing waterfowl counts on Toronto beaches. A Bayesian regression framework was chosen due to its ability to incorporate prior knowledge, handle uncertainty, and provide probabilistic estimates for both parameters and predictions. This approach is particularly suitable for ecological studies where uncertainty is inherent in both data collection and environmental processes.
 
 ## Model Setup
 
@@ -330,6 +334,18 @@ Convergence was confirmed for all parameters ($\hat{R} \approx 1$), ensuring rel
 
 In conclusion, the second model serves as a robust analytical framework for understanding the factors influencing waterfowl counts, providing important views for ecological management and conservation efforts.
 
+## Limitations and Potential Improvements
+
+While the Bayesian regression framework effectively captures key relationships, some limitations persist:
+
+- Linear Assumptions: The model assumes linear relationships between predictors and waterfowl counts, which may oversimplify ecological interactions.
+
+- Categorical Predictors: Variables such as wave action and water clarity rely on subjective categorizations, potentially introducing observer bias.
+
+- Spatial Effects: While beach names capture site-specific factors, unmeasured variables (e.g., proximity to food sources) may contribute to unexplained variability.
+
+Future iterations could explore hierarchical Bayesian models to account for nested data structures (e.g., beaches within geographic regions) and interactions between predictors.
+
 # Results {#sec-result}
 
 The results of the Bayesian regression analysis provide understandings of the factors influencing waterfowl counts on Toronto beaches. A summary of the estimates from the second model, which incorporates environmental, temporal, and spatial predictors, is presented in @tbl-modelresults.
@@ -365,6 +381,8 @@ modelsummary::datasummary_df(
 
 ## Summary of Results
 
+The Bayesian regression analysis highlights the factors influencing waterfowl counts on Toronto beaches. Environmental variables such as wave action, rain, and water clarity emerge as significant predictors, reflecting their direct impact on waterfowl habitat preferences and behaviors. Temporal trends, including a yearly decline and seasonal patterns, underscore the influence of long-term ecological shifts and migration cycles. Spatial variation across beaches indicates site-specific factors, with some beaches consistently supporting higher waterfowl counts, likely due to superior habitat quality or reduced human disturbance.
+
 ### Environmental Variables
 
 - Wind Speed: The coefficient for wind speed suggests a negligible effect on waterfowl counts, as its estimate is close to zero with wide confidence intervals.
@@ -381,7 +399,7 @@ modelsummary::datasummary_df(
 
 ### Temporal Variables
 
-- Year: A notable negative coefficient for the "year" variable indicates a decline in waterfowl counts over time, potentially reflecting environmental or ecological changes.
+- Year: A notable negative coefficient for the "year" variable indicates a decline in waterfowl counts over time, potentially reflecting environmental or ecological changes. Between 2010 and 2024, the mean annual waterfowl count decreased by approximately 50%, as shown in @fig-year-trend.
 
 - Month: Seasonal patterns emerge, with May displaying notably lower counts compared to other months, likely due to migratory or breeding behaviors.
 
@@ -436,7 +454,7 @@ ggplot(analysis_data, aes(x = water_clarity, y = water_fowl)) +
   ) +
   theme_minimal()
 ```
-@fig-water-clarity highlights the relationship between water clarity and waterfowl counts. The visualization combines boxplots and overlaid data points to meet the professor’s requirements. Clear water tends to attract higher waterfowl counts, as indicated by the data distribution and median levels.
+@fig-water-clarity highlights the relationship between water clarity and waterfowl counts. Clear water conditions consistently support higher waterfowl counts, aligning with ecological preferences for visibility during foraging.
 
 ### Wave Action vs. Waterfowl Counts
 
@@ -458,7 +476,7 @@ ggplot(data = analysis_data, aes(x = wave_action, y = water_fowl)) +
   ) +
   theme_minimal()
 ```
-@fig-wave-action illustrates the impact of wave action on waterfowl counts. Different wave action levels—none, low, moderate, and high—show distinct patterns in waterfowl behavior. The results suggest that wave action plays a significant role in influencing waterfowl distribution, with calmer conditions (low or no wave action) generally corresponding to higher counts.
+@fig-wave-action illustrates the impact of wave action on waterfowl counts. Different wave action levels—none, low, moderate, and high—show distinct patterns in waterfowl behavior. The results suggest that wave action plays a significant role in influencing waterfowl distribution, with calmer conditions (low or no wave action) generally corresponding to higher counts. Moderate wave actions create calm but dynamic water conditions that may reduce human disturbance and enhance foraging opportunities.
 
 
 
@@ -468,23 +486,35 @@ These results underline the significant influence of environmental, temporal, an
 
 ## Gains from the Study
 
-This study identifies key factors influencing waterfowl counts on Toronto beaches, offering vital understandings into urban ecology. Among environmental variables, **water clarity** emerged as a significant predictor. Clear water was associated with higher waterfowl counts, likely due to improved visibility, which facilitates foraging. This finding aligns with ecological studies suggesting that visual clarity in aquatic habitats plays a vital role in supporting avian populations. **Wave action**, another environmental factor, also demonstrated notable effects: low and moderate wave action correlated positively with waterfowl counts, while high wave action deterred their presence, possibly due to reduced safety and increased energy expenditure required for navigation.
+This study identifies key factors influencing waterfowl counts on Toronto beaches, offering vital understandings into urban ecology. Among environmental variables, **water clarity** emerged as a significant predictor. Clear water was associated with higher waterfowl counts, likely due to improved visibility, which facilitates foraging. This finding aligns with ecological studies suggesting that visual clarity in aquatic habitats plays a vital role in supporting avian populations [@thompson]. **Wave action**, another environmental factor, also demonstrated notable effects: low and moderate wave action correlated positively with waterfowl counts, while high wave action deterred their presence, possibly due to reduced safety and increased energy expenditure required for navigation. Moderate wave action could help waterfowl maintain stability in feeding areas while avoiding predation or competition often exacerbated by turbulent waters [@rubert].
 
-Temporal variables, including **year** and **month**, illustrated essential trends. The consistent decline in waterfowl counts over the years might reflect broader ecological changes, such as habitat loss, pollution, or the impacts of climate change. Seasonal variations, as captured by the month variable, highlighted the influence of migratory patterns, with peak activity during certain months aligning with known breeding and migratory behaviors. This temporal view underscores the importance of aligning conservation efforts with seasonal ecological cycles.
+Temporal variables, including **year** and **month**, illustrated essential trends. The consistent decline in waterfowl counts over the years might reflect broader ecological changes, such as habitat loss, pollution, or the impacts of climate change [@zedler]. Seasonal variations, as captured by the month variable, highlighted the influence of migratory patterns, with peak activity during certain months aligning with known breeding and migratory behaviors. This temporal view underscores the importance of aligning conservation efforts with seasonal ecological cycles.
 
 Spatial differences, captured through **beach name**, indicate that specific beaches offer unique habitat characteristics influencing waterfowl behavior. Beaches like Kew Balmy and Sunnyside, which showed higher waterfowl counts, may provide better foraging grounds, shelter, or other favorable conditions. Understanding these spatial dynamics can inform localized conservation strategies.
 
 ## Implications for Ecological Management
 
-The findings provide actionable opinions for policymakers and conservationists. For example, maintaining **water clarity** through stringent pollution control measures could significantly enhance habitat quality. Similarly, **managing wave conditions** near key habitats, potentially through engineering solutions like wave breaks, could create safer and more attractive environments for waterfowl. Conservation efforts could also benefit from applying temporal trends, such as increasing protective measures during migration peaks or breeding seasons. Specific beaches with declining waterfowl counts may require targeted interventions, such as habitat restoration or controlled human activity, to prevent further population declines.
+The findings provide actionable opinions for policymakers and conservationists. For example, maintaining **water clarity** through stringent pollution control measures could significantly enhance habitat quality. Similarly, **managing wave conditions** near key habitats, potentially through engineering solutions like wave breaks, could create safer and more attractive environments for waterfowl. Conservation efforts could also benefit from applying temporal trends, such as increasing protective measures during migration peaks or breeding seasons. Specific beaches with declining waterfowl counts may require targeted interventions, such as establishing vegetation buffers, reducing urban runoff pollution, and implementing seasonal restrictions on human activities, to prevent further population declines [@murgui].
 
 Moreover, the observed long-term decline in waterfowl populations highlights the urgent need for continuous ecological monitoring. Coordinated efforts between local authorities and environmental organizations could establish regular surveys to assess trends and address emerging threats proactively.
 
 ## Limitations of the Study
 
-While this study offers vital results, it is not without limitations. The reliance on existing data, although complete, may not fully capture **unmeasured ecological factors**, such as food availability, predator dynamics, or disturbances from human activities like beachgoers and water sports. Additionally, the study assumes linear relationships between predictors and waterfowl counts. However, ecological interactions are often non-linear and complex, suggesting that some slight relationships may not have been fully explored.
+While this study provides understanding for the factors influencing waterfowl counts on Toronto beaches, several limitations should be noted to contextualize the findings:
 
-The use of categorical variables for **wave action** and **water clarity** introduces subjectivity, as these categories may not uniformly reflect environmental conditions across different observers. Similarly, the influence of spatial variables, such as beach name, may include unaccounted-for site-specific factors beyond the variables included in the model.
+- Unmeasured Ecological Variables: The dataset does not capture ecological factors such as food availability, predator-prey dynamics, or specific human disturbances like beach cleaning or construction. These unmeasured variables could play a significant role in influencing waterfowl behavior and populations.
+
+- Assumptions of Linear Relationships: The study assumes linear relationships between predictors and waterfowl counts. However, ecological systems are inherently complex and often involve non-linear interactions. Important difference may have been overlooked due to this simplification.
+
+- Categorical Variable Subjectivity: The use of categorical variables for factors like wave action and water clarity introduces observer subjectivity. Different observers may interpret these categories inconsistently, which could affect data reliability. Observer bias in categorizing variables such as water clarity and wave action could influence the consistency of the dataset.
+
+- Spatial Variables and Site-Specific Factors: While beach names serve as proxies for spatial variation, they may not fully capture site-specific characteristics such as habitat type, pollution levels, or human activity intensity. These unmeasured factors could confound the observed relationships.
+
+- Temporal Resolution: The temporal granularity of the dataset limits understandings for short-term ecological dynamics, such as diurnal activity patterns or responses to sudden weather changes. Incorporating finer temporal data could improve the robustness of the analysis.
+
+- Data Exclusions Due to Missing Values: Variables with significant missing data, such as rain amount and turbidity, were excluded from the analysis. This exclusion may result in a partial understanding of environmental influences.
+
+- Model Limitations: The Bayesian linear regression framework, while effective for many applications, may not capture all complexities of ecological data. For instance, hierarchical models or machine learning approaches might better account for nested structures or interactions among predictors.
 
 ## Future Research Directions
 
@@ -492,7 +522,7 @@ Future research can build on these findings by addressing the limitations. Incor
 
 The application of **non-linear modeling approaches**, such as hierarchical Bayesian models or machine learning techniques, could capture more complex relationships and interactions among predictors. These methods could also explore how the effects of certain predictors vary across beaches or seasons.
 
-Longitudinal studies focused on specific **beaches with declining waterfowl trends** could offer opinions on localized threats and solutions. For example, identifying whether habitat degradation or pollution is a primary driver at a specific location could guide targeted restoration efforts. Additionally, **collaborative citizen science initiatives** could enrich the dataset by providing broader spatial and temporal coverage, enhancing accuracy and engagement in ecological monitoring.
+Longitudinal studies focused on specific **beaches with declining waterfowl trends** could offer opinions on localized threats and solutions. For example, identifying whether habitat degradation or pollution is a primary driver at a specific location could guide targeted restoration efforts. Additionally, **collaborative citizen science initiatives** could enrich the dataset by providing broader spatial and temporal coverage, enhancing accuracy and engagement in ecological monitoring [@storey].
 
 Finally, the impact of climate change on waterfowl populations warrants further investigation. Studies incorporating **climate data**, such as precipitation, temperature extremes, and wind patterns, could identify how these broader factors interact with local conditions to shape waterfowl behaviors. Such research would be vital for developing adaptive conservation strategies in a changing climate.
 
