@@ -62,7 +62,7 @@ cleaned_data <-
   ) |> # Drop rows with NA in key numeric columns
   mutate(
     rain = if_else(rain == "Yes", 1, if_else(rain == "No", 0, NA_real_)),
-    wave_action = str_to_lower(wave_action) |> 
+    wave_action = str_to_lower(wave_action) |>
       factor(levels = c("none", "low", "mod", "high")),
     water_clarity = case_when(
       str_detect(water_clarity, regex("clear|clean", ignore_case = TRUE)) ~ "clear",

@@ -60,4 +60,3 @@ saveRDS(
 # Print summary of the models
 print(summary(first_model))
 print(summary(second_model))
-

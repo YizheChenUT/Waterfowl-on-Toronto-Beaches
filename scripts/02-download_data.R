@@ -21,7 +21,7 @@ resources <- list_package_resources("toronto-beaches-observations")
 
 # Filter for datastore resources (CSV or GeoJSON formats)
 datastore_resources <- resources |>
-  filter(tolower(format) %in% c('csv', 'geojson'))
+  filter(tolower(format) %in% c("csv", "geojson"))
 
 # Load the first datastore resource (CSV file for observations)
 the_raw_data <- datastore_resources |>

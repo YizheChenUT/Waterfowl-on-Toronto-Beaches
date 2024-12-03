@@ -102,7 +102,6 @@ ggplot(analysis_data, aes(x = water_fowl)) +
     x = "Waterfowl Count",
     y = "Frequency"
   )
-
 ```
 
 
@@ -126,13 +125,12 @@ Measures the speed of wind at the observation site. Wind conditions may influenc
 #| warning: false
 #| message: false
 
-analysis_data |> 
+analysis_data |>
   ggplot(aes(x = wind_speed)) +
   geom_histogram(bins = 30, fill = "steelblue", alpha = 0.7) +
   geom_point(aes(y = ..count..), stat = "bin", binwidth = 1, position = "jitter", alpha = 0.4) +
   theme_minimal() +
   labs(x = "Wind Speed (m/s)", y = "Count", title = "Distribution of Wind Speed")
-
 ```
 
 #### Air Temperature
@@ -149,12 +147,11 @@ Represents the atmospheric temperature at the time of observation. Air temperatu
 #| warning: false
 #| message: false
 
-analysis_data |> 
+analysis_data |>
   ggplot(aes(x = air_temp)) +
   geom_density(fill = "tomato", alpha = 0.6) +
   theme_minimal() +
   labs(x = "Air Temperature (°C)", y = "Density", title = "Distribution of Air Temperature")
-
 ```
 
 #### Water Temperature
@@ -171,12 +168,11 @@ Indicates the temperature of the water, which directly impacts the suitability o
 #| warning: false
 #| message: false
 
-analysis_data |> 
+analysis_data |>
   ggplot(aes(x = water_temp)) +
   geom_histogram(bins = 20, fill = "forestgreen", alpha = 0.7) +
   theme_minimal() +
   labs(x = "Water Temperature (°C)", y = "Count", title = "Distribution of Water Temperature")
-
 ```
 
 ### Temporal Variables
@@ -195,15 +191,14 @@ Captures long-term trends and shifts in waterfowl populations. These trends may 
 #| warning: false
 #| message: false
 
-analysis_data |> 
-  group_by(year) |> 
-  summarise(mean_water_fowl = mean(water_fowl, na.rm = TRUE)) |> 
+analysis_data |>
+  group_by(year) |>
+  summarise(mean_water_fowl = mean(water_fowl, na.rm = TRUE)) |>
   ggplot(aes(x = year, y = mean_water_fowl)) +
   geom_line(color = "blue") +
   geom_point(color = "darkblue") +
   theme_minimal() +
   labs(x = "Year", y = "Mean Waterfowl Count", title = "Trends in Waterfowl Counts Over the Years")
-
 ```
 
 #### Month
@@ -220,13 +215,12 @@ Accounts for seasonal variations, providing views into the effects of migration 
 #| warning: false
 #| message: false
 
-analysis_data |> 
+analysis_data |>
   ggplot(aes(x = month, y = water_fowl)) +
   geom_boxplot(outlier.alpha = 0.3, fill = "orange", alpha = 0.5) +
   geom_jitter(width = 0.2, alpha = 0.4, color = "darkorange") +
   theme_minimal() +
   labs(x = "Month", y = "Waterfowl Count", title = "Monthly Variation in Waterfowl Counts")
-
 ```
 
 ### Spatial Variables
@@ -245,14 +239,13 @@ Identifies the observation location, reflecting site-specific environmental or h
 #| warning: false
 #| message: false
 
-analysis_data |> 
+analysis_data |>
   ggplot(aes(x = fct_reorder(beach_name, water_fowl, .fun = median), y = water_fowl)) +
   geom_boxplot(outlier.alpha = 0.3, fill = "purple", alpha = 0.6) +
   geom_jitter(width = 0.2, alpha = 0.4, color = "mediumpurple") +
   coord_flip() +
   theme_minimal() +
   labs(x = "Beach Name", y = "Waterfowl Count", title = "Distribution of Waterfowl Counts by Beach")
-
 ```
 
 
@@ -442,7 +435,6 @@ ggplot(analysis_data, aes(x = water_clarity, y = water_fowl)) +
     y = "Waterfowl Counts",
   ) +
   theme_minimal()
-
 ```
 @fig-water-clarity highlights the relationship between water clarity and waterfowl counts. The visualization combines boxplots and overlaid data points to meet the professor’s requirements. Clear water tends to attract higher waterfowl counts, as indicated by the data distribution and median levels.
 
@@ -465,7 +457,6 @@ ggplot(data = analysis_data, aes(x = wave_action, y = water_fowl)) +
     y = "Waterfowl Counts",
   ) +
   theme_minimal()
-
 ```
 @fig-wave-action illustrates the impact of wave action on waterfowl counts. Different wave action levels—none, low, moderate, and high—show distinct patterns in waterfowl behavior. The results suggest that wave action plays a significant role in influencing waterfowl distribution, with calmer conditions (low or no wave action) generally corresponding to higher counts.
 

@@ -27,8 +27,8 @@ test_that("Dataset has 12 columns", {
 
 # Validate the date range
 test_that("'data_collection_date' is within expected range", {
-  expect_true(all(analysis_data$data_collection_date >= as.Date("2005-01-01") & 
-                    analysis_data$data_collection_date <= as.Date("2025-01-01")))
+  expect_true(all(analysis_data$data_collection_date >= as.Date("2005-01-01") &
+    analysis_data$data_collection_date <= as.Date("2025-01-01")))
 })
 
 # Validate numerical columns (wind_speed, air_temp, water_temp, water_fowl)
