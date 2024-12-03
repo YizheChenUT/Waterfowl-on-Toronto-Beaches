@@ -10,7 +10,7 @@
 
 #### Workspace setup ####
 library(tidyverse)
-library(arrow)
+library(arrow) # For saving Parquet files
 set.seed(853)
 
 
@@ -24,44 +24,45 @@ simulated_data <- tibble(
     seq.Date(from = as.Date("2010-01-01"), to = as.Date("2024-01-01"), by = "day"),
     size = n,
     replace = TRUE
-  ),
+  ), # Randomly sample dates between 2010-01-01 and 2024-01-01
   beach_name = sample(
     c("Sunnyside Beach", "Woodbine Beach", "Cherry Beach", 
       "Hanlan's Point Beach", "Marie Curtis Park Beach", 
       "Kew Balmy Beach", "Centre Island Beach"),
     size = n,
     replace = TRUE
-  ),
-  wind_speed = round(rnorm(n, mean = 10, sd = 3), 1),
-  air_temp = round(rnorm(n, mean = 20, sd = 5), 1),
-  water_temp = round(rnorm(n, mean = 18, sd = 3), 1),
-  rain = rbinom(n, 1, prob = 0.3),
+  ), # Randomly assign beach names to each observation
+  wind_speed = round(rnorm(n, mean = 10, sd = 3), 1),  # Generate wind speed (normally distributed with mean = 10, sd = 3)
+  air_temp = round(rnorm(n, mean = 20, sd = 5), 1),  # Generate air temperature (normally distributed with mean = 20, sd = 5)
+  water_temp = round(rnorm(n, mean = 18, sd = 3), 1),   # Generate water temperature (normally distributed with mean = 18, sd = 3) 
+  rain = rbinom(n, 1, prob = 0.3),  # Generate binary rain indicator (0 or 1, with 30% probability of rain)
   wave_action = sample(
     c("none", "low", "mod", "high"),
     size = n,
     replace = TRUE,
     prob = c(0.2, 0.3, 0.3, 0.2)
-  ),
+  ), # Randomly assign wave action categories with specific probabilities
   water_clarity = sample(
     c("clear", "cloudy", "unknown"),
     size = n,
     replace = TRUE,
     prob = c(0.5, 0.3, 0.2)
-  )
+  )   # Randomly assign water clarity categories with specific probabilities
 ) |>
+  # Compute waterfowl count as a function of other variables
   mutate(
     waterfowl_count = round(
-      10 + 0.2 * wind_speed - 0.1 * air_temp + 
-        0.3 * water_temp + 
+      10 + 0.2 * wind_speed - 0.1 * air_temp +  # Base model with wind speed and air temp
+        0.3 * water_temp +   # Positive contribution of water temperature
         ifelse(wave_action == "low", 1, 
                ifelse(wave_action == "mod", 2, 
-                      ifelse(wave_action == "high", 3, 0)
+                      ifelse(wave_action == "high", 3, 0)  # Increment based on wave action
                )
         ) + 
-        rain * 2 + 
+        rain * 2 +  # Add 2 if it's raining
         ifelse(water_clarity == "clear", 3, 
-               ifelse(water_clarity == "cloudy", 1, 0)
-        ) + rnorm(n, mean = 0, sd = 3)
+               ifelse(water_clarity == "cloudy", 1, 0)  # Increment for clear or cloudy water
+        ) + rnorm(n, mean = 0, sd = 3)  # Add random noise with mean = 0, sd = 3
     )
   )
 
