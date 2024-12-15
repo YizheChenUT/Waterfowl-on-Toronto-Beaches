@@ -85,7 +85,7 @@ test_that("Missing and duplicate values", {
 
 #### Test Suite using pointblank ####
 # Validate dataset with pointblank
-agent <- create_agent(tbl = simulated_data) %>%
+agent <- create_agent(tbl = simulated_data) |>
   col_schema_match(
     schema = col_schema(
       data_collection_date = "character",
